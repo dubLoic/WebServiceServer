@@ -11,5 +11,10 @@ namespace WebserviceServer.Entite
         public string text { get; set; }
         public string genre { get; set; }
 
+        //public override string ToString()
+        //{
+
+        //}
+
     }
 }

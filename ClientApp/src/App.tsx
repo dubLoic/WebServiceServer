@@ -1,82 +1,102 @@
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import {useState} from 'react';
+import { useEffect, useState } from 'react';
 import Header from './components/header/Header'
 import Data from './components/models/Data'
 import Search from './components/body/search-panel/Search';
 import MediaList from './components/body/display-panel/MediaList';
 import MediaSearch from './components/models/MediaSearch';
 
-const App : React.FC = () => {
-  const location: string = window.location.pathname !== '/' ? window.location.pathname : Data.PATH_SEARCH_MOVIES;
-  const [user, setUser] = useState('Visiteur')
+const App: React.FC = () => {
+    const location: string = window.location.pathname !== '/' ? window.location.pathname : Data.PATH_SEARCH_MOVIES;
+    const [user, setUser] = useState('Visiteur')
 
-  const [searchBar, setSearchBar] = useState<string | undefined>('')
-  const [genre, setGenre] = useState<string | undefined>()
+    const [searchBar, setSearchBar] = useState<string | undefined>('')
+    const [genre, setGenre] = useState<string | undefined>()
+    const [search, setSearch] = useState<boolean>(false)
 
-  const updateSearchBarValue = (value:string | undefined) => {
-    if(value){
-      setGenre('');
-      setSearchBar(value);
-      fetchMedias();
+    useEffect(() => {
+        if (search) {
+            getResult();
+            setSearch(false);
+        }
+    }, [search])
+
+    const updateSearchBarValue = (value: string | undefined) => {
+        if (value) {
+            setGenre('');
+            setSearchBar(value);
+            setSearch(true);
+        }
     }
-  }
-  const updateGenre = (opt: string | undefined) => {
-    if(opt){
-      setSearchBar('');
-      setGenre(opt);
-      fetchMedias();
+    const updateGenre = (opt: string | undefined) => {
+        if (opt) {
+            setSearchBar('');
+            setGenre(opt);
+            setSearch(true);
+        }
     }
-  }
+    const getResult = async () => {
+        let tmp = await fetchMedias();
+        console.log(tmp);
+    }
 
-  const fetchMedias = async () => {
-    let type: number = getMediaTypeByLocation();
-    let search: MediaSearch = {mediaType: type, text: searchBar, genre: genre};
+    const fetchMedias = async () => {
+        let type: number = getMediaTypeByLocation();
+        let search: MediaSearch = { mediaType: type, text: searchBar, genre: genre };
+        //let query = search.mediaType.toString() + '_' + search.text + '_' + search.genre?.toString();
+        let url = "Search/"
 
-      const res = await fetch("https://localhost:44342/search/"+search.toString());
-    const data = await res.json();
-    console.log(data);
-  }
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ mediaType: type, text: searchBar, genre: genre })
+        };
+        const res = await fetch(url, requestOptions);
 
-  const getMediaTypeByLocation = () => {
-    if(location === Data.PATH_SEARCH_MOVIES) return 1;
-    if(location === Data.PATH_SEARCH_TV) return 2;
-    return 0;
-  }
+        const data = await res.json();
+        return data;
+    }
 
-  return (
-    <Router>
-      <div className="App">
+    const getMediaTypeByLocation = () => {
+        if (location === Data.PATH_SEARCH_MOVIES) return 1;
+        if (location === Data.PATH_SEARCH_TV) return 2;
+        return 0;
+    }
 
-        <Header location={location} user={user} />
-        <Switch>
-          <Route path={Data.PATH_SEARCH_MOVIES}>
-            <Search mediaType='Movie' 
-                    searchBarValue={searchBar}
-                    selectValue={genre}
-                    onChange={updateSearchBarValue} 
-                    onSelected={updateGenre} />
-          </Route>
+    return (
+        <Router>
+            <div className="App">
 
-          <Route path={Data.PATH_SEARCH_TV}>
-            <Search mediaType='TV Show' 
-                    searchBarValue={searchBar} 
-                    selectValue={genre}
-                    onChange={updateSearchBarValue} 
-                    onSelected={updateGenre} />
-          </Route>
+                <Header location={location} user={user} />
+                <Switch>
+                    <Route path={Data.PATH_SEARCH_MOVIES}>
+                        <Search mediaType='Movie'
+                            searchBarValue={searchBar}
+                            selectValue={genre}
+                            onChange={updateSearchBarValue}
+                            onSelected={updateGenre} />
+                    </Route>
 
-          <Route path={Data.PATH_FAVORITES}>
-            <MediaList />
-          </Route>
+                    <Route path={Data.PATH_SEARCH_TV}>
+                        <Search mediaType='TV Show'
+                            searchBarValue={searchBar}
+                            selectValue={genre}
+                            onChange={updateSearchBarValue}
+                            onSelected={updateGenre} />
+                    </Route>
 
-          <Route path={Data.PATH_SUGGESTIONS}>
+                    <Route path={Data.PATH_FAVORITES}>
+                        <MediaList />
+                    </Route>
 
-          </Route>
-        </Switch>
+                    <Route path={Data.PATH_SUGGESTIONS}>
 
-      </div>
-    </Router>
-  );
+                    </Route>
+                </Switch>
+
+            </div>
+        </Router>
+    );
 }
 
 export default App;

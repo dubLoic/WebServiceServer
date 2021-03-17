@@ -14,34 +14,38 @@ namespace WebserviceServer.Controllers
     [ApiController]
     public class SearchController : ControllerBase
     {
-        private static string URL = "https://api.themoviedb.org/3/search/multi?";
+        private static string URL = "https://api.themoviedb.org/3";
 
-        [HttpGet]
-        public string GetSearch(string query)
+        [HttpPost]
+        public string Post(MediaSearch query)
         {
-            MediaSearch monObjet = JsonConvert.DeserializeObject<MediaSearch>(query);
+            using (var client = new HttpClient())
+            {
+                string extens = "";
+                if (!string.IsNullOrEmpty(query.genre))
+                    extens = "/discover/movie?with_genres=" + query.genre;
+                else
+                    extens = "/search/multi?query=" + query.text;
 
-            //using (var client = new HttpClient())
-            //{
-            //    //HTTP GET
-            //    var responseTask = client.GetAsync(URL + "query=" + query + "&" + APIKey.apiKey);
-            //    responseTask.Wait();
+                //HTTP GET
+                string url = URL + extens + "&" + APIKey.apiKey;
+                var responseTask = client.GetAsync(url);
+                responseTask.Wait();
 
-            //    var result = responseTask.Result;
-            //    if (result.IsSuccessStatusCode)
-            //    {
-            //        var readTask = result.Content.ReadAsStringAsync();
-            //        readTask.Wait();
+                var result = responseTask.Result;
+                if (result.IsSuccessStatusCode)
+                {
+                    var readTask = result.Content.ReadAsStringAsync();
+                    readTask.Wait();
 
-            //        return readTask.Result;
-            //    }
-            //    else
-            //    {
-            //        ModelState.AddModelError(string.Empty, "Server error. Please contact administrator.");
-            //        return "Nothing";
-            //    }
-            //}
-            return monObjet.ToString();
+                    return readTask.Result;
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Server error. Please contact administrator.");
+                    return "Nothing";
+                }
+            }
         }
     }
 }
