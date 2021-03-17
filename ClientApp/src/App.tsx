@@ -22,7 +22,7 @@ const App: React.FC = () => {
     }, [search])
 
     const updateSearchBarValue = (value: string | undefined) => {
-        if (value) {
+        if (value !== undefined) {
             setGenre('');
             setSearchBar(value);
             setSearch(true);

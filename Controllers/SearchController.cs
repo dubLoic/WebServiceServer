@@ -21,14 +21,19 @@ namespace WebserviceServer.Controllers
         {
             using (var client = new HttpClient())
             {
-                string extens = "";
+                string extens = "/search/multi?";
                 if (!string.IsNullOrEmpty(query.genre))
-                    extens = "/discover/movie?with_genres=" + query.genre;
+                    extens = "/discover/movie?with_genres=" + query.genre + "&";
+                else if (!string.IsNullOrEmpty(query.text))
+                    extens = "/search/multi?query=" + query.text + "&";
                 else
-                    extens = "/search/multi?query=" + query.text;
+                {
+                    ModelState.AddModelError(string.Empty, "Server error. Please contact administrator.");
+                    return JsonConvert.SerializeObject("Nothing");
+                }
 
                 //HTTP GET
-                string url = URL + extens + "&" + APIKey.apiKey;
+                string url = URL + extens + APIKey.apiKey;
                 var responseTask = client.GetAsync(url);
                 responseTask.Wait();
 
@@ -38,7 +43,14 @@ namespace WebserviceServer.Controllers
                     var readTask = result.Content.ReadAsStringAsync();
                     readTask.Wait();
 
-                    return readTask.Result;
+                    // We got a result
+                    MediaResult jsonRes = JsonConvert.DeserializeObject<MediaResult>(readTask.Result);
+                    MediaDTO[] medias = jsonRes.results;
+
+                    // TODO : keep the good media_type (tv show / movie)
+
+
+                    return JsonConvert.SerializeObject(medias);
                 }
                 else
                 {
