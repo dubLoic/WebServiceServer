@@ -5,9 +5,11 @@ import Data from './components/models/Data'
 import Search from './components/body/search-panel/Search';
 import MediaList from './components/body/display-panel/MediaList';
 import MediaSearch from './components/models/MediaSearch';
+import Media from './components/body/display-panel/Media';
 
 const App: React.FC = () => {
     const location: string = window.location.pathname !== '/' ? window.location.pathname : Data.PATH_SEARCH_MOVIES;
+
     const [user, setUser] = useState('Visiteur')
 
     const [searchBar, setSearchBar] = useState<string | undefined>('')
@@ -37,13 +39,14 @@ const App: React.FC = () => {
     }
     const getResult = async () => {
         let tmp = await fetchMedias();
-        console.log(tmp);
+        if (tmp !== "Nothing") {
+            console.log(tmp);
+            setMedias(tmp);
+        }
     }
 
     const fetchMedias = async () => {
         let type: number = getMediaTypeByLocation();
-        let search: MediaSearch = { mediaType: type, text: searchBar, genre: genre };
-        //let query = search.mediaType.toString() + '_' + search.text + '_' + search.genre?.toString();
         let url = "Search/"
 
         const requestOptions = {
@@ -57,24 +60,35 @@ const App: React.FC = () => {
         return data;
     }
 
+    const [medias, setMedias] = useState<Media[]>([])
+
+
     const getMediaTypeByLocation = () => {
         if (location === Data.PATH_SEARCH_MOVIES) return 1;
         if (location === Data.PATH_SEARCH_TV) return 2;
         return 0;
     }
 
+    const setSearchToDefault = () => {
+        setSearchBar('');
+        setGenre('');
+        setMedias([]);
+    }
+
     return (
         <Router>
             <div className="App">
 
-                <Header location={location} user={user} />
+                <Header location={location} onChangedTab={setSearchToDefault} user={user} />
                 <Switch>
-                    <Route path={Data.PATH_SEARCH_MOVIES}>
+                    <Route path={[Data.PATH_SEARCH_MOVIES, '/']}>
                         <Search mediaType='Movie'
                             searchBarValue={searchBar}
                             selectValue={genre}
                             onChange={updateSearchBarValue}
                             onSelected={updateGenre} />
+
+                        <MediaList medias={medias}  />
                     </Route>
 
                     <Route path={Data.PATH_SEARCH_TV}>
@@ -83,10 +97,12 @@ const App: React.FC = () => {
                             selectValue={genre}
                             onChange={updateSearchBarValue}
                             onSelected={updateGenre} />
+
+                        <MediaList medias={medias} />
                     </Route>
 
                     <Route path={Data.PATH_FAVORITES}>
-                        <MediaList />
+                        
                     </Route>
 
                     <Route path={Data.PATH_SUGGESTIONS}>

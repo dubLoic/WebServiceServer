@@ -21,16 +21,10 @@ namespace WebserviceServer.Controllers
         {
             using (var client = new HttpClient())
             {
-                string extens = "/search/multi?";
-                if (!string.IsNullOrEmpty(query.genre))
-                    extens = "/discover/movie?with_genres=" + query.genre + "&";
-                else if (!string.IsNullOrEmpty(query.text))
-                    extens = "/search/multi?query=" + query.text + "&";
-                else
-                {
-                    ModelState.AddModelError(string.Empty, "Server error. Please contact administrator.");
+                string extens = FormatUrl(query.mediaType, query?.genre, query?.text, out bool success);
+
+                if(!success)
                     return JsonConvert.SerializeObject("Nothing");
-                }
 
                 //HTTP GET
                 string url = URL + extens + APIKey.apiKey;
@@ -43,14 +37,7 @@ namespace WebserviceServer.Controllers
                     var readTask = result.Content.ReadAsStringAsync();
                     readTask.Wait();
 
-                    // We got a result
-                    MediaResult jsonRes = JsonConvert.DeserializeObject<MediaResult>(readTask.Result);
-                    MediaDTO[] medias = jsonRes.results;
-
-                    // TODO : keep the good media_type (tv show / movie)
-
-
-                    return JsonConvert.SerializeObject(medias);
+                    return ConvertReceivedData(readTask.Result);
                 }
                 else
                 {
@@ -58,6 +45,31 @@ namespace WebserviceServer.Controllers
                     return "Nothing";
                 }
             }
+        }
+
+        private string FormatUrl(int mediaType, string genre, string text, out bool success)
+        {
+            string type = mediaType == 1 ? "movie?" : "tv?";
+            success = true;
+            string extens = "";
+            if (!string.IsNullOrEmpty(genre))
+                extens = "/discover/"+ type + "with_genres=" + genre + "&";
+            else if (!string.IsNullOrEmpty(text))
+                extens = "/search/" + type + "query=" + text + "&";
+            else
+                success = false;
+            return extens;
+        }
+
+        private string ConvertReceivedData(string jsonObject)
+        {
+            MediaResult res = JsonConvert.DeserializeObject<MediaResult>(jsonObject);
+            MediaDTO[] medias = res.results;
+            for (int i = 0; i < medias.Length; i++)
+            {
+                medias[i] = medias[i].Format();
+            }
+            return JsonConvert.SerializeObject(medias);
         }
     }
 }

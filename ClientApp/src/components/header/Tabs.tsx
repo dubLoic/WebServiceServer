@@ -4,7 +4,7 @@ import NavItem from "../models/NavItem";
 import Data from '../models/Data'
 
 
-const Tabs: React.FC<Props> = ({location}) => {
+const Tabs: React.FC<Props> = ({location, onChangedTab}) => {
     const [navItems, setNavItems] = useState<NavItem[]>([
         { id: 1, name:Data.NAME_SEARCH_MOVIES, active: location === Data.PATH_SEARCH_MOVIES ? 'active' : ''},
         { id: 2, name:Data.NAME_SEARCH_TV, active: location === Data.PATH_SEARCH_TV ? 'active' : ''},
@@ -13,13 +13,14 @@ const Tabs: React.FC<Props> = ({location}) => {
     ]);
 
     const onClick = (id: number) => {
+        onChangedTab();
         setNavItems(navItems.map((item) => item.id === id
-      ?
-        {...item, active: 'active'}
-      :
-        {...item, active: ''}
-      )
-    )
+          ?
+            {...item, active: 'active'}
+          :
+            {...item, active: ''}
+          )
+        )
     }
 
     return (
@@ -40,6 +41,7 @@ const Tabs: React.FC<Props> = ({location}) => {
 
 interface Props {
     location: string;
+    onChangedTab: () => void;
 }
 
 export default Tabs

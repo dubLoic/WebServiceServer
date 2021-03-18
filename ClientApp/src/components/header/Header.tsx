@@ -2,7 +2,7 @@ import Logo from "./Logo"
 import Tabs from './Tabs'
 import User from "./User"
 
-const Header: React.FC<Props> = ({user, location}) => {
+const Header: React.FC<Props> = ({user, location, onChangedTab}) => {
     return (
         <nav style={navStyle} className="nav-extended">
             <div className="container nav-wrapper">
@@ -10,7 +10,7 @@ const Header: React.FC<Props> = ({user, location}) => {
                 
                 <User user={user} />
 
-                <Tabs location={location} />
+                <Tabs onChangedTab={onChangedTab} location={location} />
             </div>
         </nav>
     )
@@ -19,6 +19,7 @@ const Header: React.FC<Props> = ({user, location}) => {
 interface Props{
     user: string;
     location: string;
+    onChangedTab: () => void;
 }
 
 // CSS in JS

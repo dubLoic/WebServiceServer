@@ -30,9 +30,8 @@ const Gender: React.FC<Props> = ({onSelected, selectValue}) => {
     const inputRef = useRef<HTMLSelectElement>(null);
 
     return (
-        <div className="input-field">
-            <label>Genre :
-                <select ref={inputRef} onChange={() => onSelected(inputRef.current?.value)}>
+        <label>Genre :
+            <select ref={inputRef} onChange={() => onSelected(inputRef.current?.value)}>
                     {selectValue === '' 
                         ?
                         <option value="0" selected>None</option>
@@ -47,7 +46,6 @@ const Gender: React.FC<Props> = ({onSelected, selectValue}) => {
                         ))}
                 </select>
             </label>
-        </div>
     )
 }
 

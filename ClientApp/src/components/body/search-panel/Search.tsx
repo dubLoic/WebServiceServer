@@ -8,9 +8,10 @@ const Search: React.FC<Props> = ({mediaType, onChange, onSelected, searchBarValu
         <div className="container">
             <h3>Search for a {mediaType}</h3>
 
-            <SearchBar searchBarValue={searchBarValue} onChange={onChange} target='MediaTitle' label='Title or Director :' />
+            <SearchBar searchBarValue={searchBarValue} onChange={onChange} target='MediaTitle' label='Title :' />
 
             <Gender selectValue={selectValue} onSelected={onSelected} />
+
         </div>
     )
 }

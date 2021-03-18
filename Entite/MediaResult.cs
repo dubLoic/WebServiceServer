@@ -9,5 +9,6 @@ namespace WebserviceServer.Entite
     {
         public int page { get; set; }
         public MediaDTO[] results { get; set; }
+        public int total_pages { get; set; }
     }
 }
