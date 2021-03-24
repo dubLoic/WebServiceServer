@@ -14,7 +14,9 @@ const App: React.FC = () => {
 
     const [searchBar, setSearchBar] = useState<string | undefined>('')
     const [genre, setGenre] = useState<string | undefined>()
+    const [message, setMessage] = useState<string>("Our selection for you :")
     const [search, setSearch] = useState<boolean>(false)
+    const [medias, setMedias] = useState<Media[]>([])
 
     useEffect(() => {
         if (search) {
@@ -22,6 +24,18 @@ const App: React.FC = () => {
             setSearch(false);
         }
     }, [search])
+
+    useEffect(() => {
+        if ((!searchBar || searchBar === '') && (!genre || genre === "0"))
+            getDefaultResults("Our selection for you :")
+        else if (medias.length === 0)
+            getDefaultResults("No result, check our selection for you :")
+    }, [])
+
+    const getDefaultResults = (msg: string) => {
+        setMessage(msg);
+        getDiscoverResult();
+    }
 
     const updateSearchBarValue = (value: string | undefined) => {
         if (value !== undefined) {
@@ -39,6 +53,13 @@ const App: React.FC = () => {
     }
     const getResult = async () => {
         let tmp = await fetchMedias();
+        if (tmp !== "Nothing") {
+            setMedias(tmp);
+            setMessage("Results :")
+        }
+    }
+    const getDiscoverResult = async () => {
+        let tmp = await fetchDiscover();
         if (tmp !== "Nothing") {
             setMedias(tmp);
         }
@@ -59,8 +80,15 @@ const App: React.FC = () => {
         return data;
     }
 
-    const [medias, setMedias] = useState<Media[]>([])
+    const fetchDiscover = async () => {
+        let type: number = getMediaTypeByLocation();
+        let url = "Search/" + type;
 
+        const res = await fetch(url);
+
+        const data = await res.json();
+        return data;
+    }
 
     const getMediaTypeByLocation = () => {
         if (location === Data.PATH_SEARCH_MOVIES) return 1;
@@ -87,7 +115,7 @@ const App: React.FC = () => {
                             onChange={updateSearchBarValue}
                             onSelected={updateGenre} />
 
-                        <MediaList medias={medias}  />
+                        <MediaList medias={medias} message={message} />
                     </Route>
 
                     <Route path={Data.PATH_SEARCH_TV}>
@@ -97,11 +125,11 @@ const App: React.FC = () => {
                             onChange={updateSearchBarValue}
                             onSelected={updateGenre} />
 
-                        <MediaList medias={medias} />
+                        <MediaList medias={medias} message={message} />
                     </Route>
 
                     <Route path={Data.PATH_FAVORITES}>
-                        
+
                     </Route>
 
                     <Route path={Data.PATH_SUGGESTIONS}>

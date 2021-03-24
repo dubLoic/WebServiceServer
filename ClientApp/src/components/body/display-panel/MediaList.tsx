@@ -3,7 +3,7 @@ import Media from './Media'
 import MediaCard from './MediaCard'
 import MediaModal from './MediaModal';
 
-const MediaList: React.FC<Props> = ({ medias }) => {
+const MediaList: React.FC<Props> = ({ medias, message }) => {
     
     const [mediaToDisplay, setMediaToDisplay] = useState<Media | undefined>(undefined);
 
@@ -17,13 +17,7 @@ const MediaList: React.FC<Props> = ({ medias }) => {
     return (
         <div className="container">
             <br />
-            {medias?.length > 0
-                ?
-                <h4>Results</h4>
-
-                :
-                <h5>No results</h5>
-            }
+            {message}
             <br />
             <div className="display-grid">
                 {medias.map((item) => (
@@ -41,6 +35,7 @@ const MediaList: React.FC<Props> = ({ medias }) => {
 
 interface Props {
     medias: Media[];
+    message: string;
 }
 
 export default MediaList

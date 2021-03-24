@@ -28,7 +28,7 @@ const MediaModal: React.FC<Props> = ({ media, show, handleClose }) => {
             <Modal.Body>
                 <div className="modal-grid">
                     <div className="photo">
-                        <img src={media?.poster_path} width="170" height="250" />
+                        <img src={media?.poster_path} width="255" height="375" />
                     </div>
 
                     <div className="title">
@@ -39,14 +39,29 @@ const MediaModal: React.FC<Props> = ({ media, show, handleClose }) => {
                         {media?.overview}
                     </div>
 
-                    <div className="like btn" onClick={() => handleLike(media?.id)}>
-                        Like ({nbLikes})
+                    <div className="grade">
+                        Note :
                     </div>
                 </div>
             </Modal.Body>
-
             <Modal.Footer>
-
+                <div className="foot">
+                    <div className="like btn" onClick={() => handleLike(media?.id)}>
+                        Add to Favorites ({nbLikes})
+                        </div>
+                    <select className="sugg">
+                        <option value="none" selected>Suggest to :</option>
+                    </select>
+                    <select className="grade">
+                        <option value="none" selected disabled>Note :</option>
+                        <option value="0" >0</option>
+                        <option value="1" >1</option>
+                        <option value="2" >2</option>
+                        <option value="3" >3</option>
+                        <option value="4" >4</option>
+                        <option value="5">5</option>
+                    </select>
+                </div>
             </Modal.Footer>
         </Modal>
     )

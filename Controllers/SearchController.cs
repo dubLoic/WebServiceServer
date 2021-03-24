@@ -16,6 +16,34 @@ namespace WebserviceServer.Controllers
     {
         private static string URL = "https://api.themoviedb.org/3";
 
+        [HttpGet]
+        public string Get(string mediaType)
+        {
+            using (var client = new HttpClient())
+            {
+                string extens = FormatUrl(mediaType, APIKey.apiKey);
+
+                //HTTP GET
+                string url = URL + extens;
+                var responseTask = client.GetAsync(url);
+                responseTask.Wait();
+
+                var result = responseTask.Result;
+                if (result.IsSuccessStatusCode)
+                {
+                    var readTask = result.Content.ReadAsStringAsync();
+                    readTask.Wait();
+
+                    return ConvertReceivedData(readTask.Result);
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Server error. Please contact administrator.");
+                    return "Nothing";
+                }
+            }
+        }
+
         [HttpPost]
         public string Post(MediaSearch query)
         {
@@ -59,6 +87,15 @@ namespace WebserviceServer.Controllers
             else
                 success = false;
             return extens;
+        }
+
+        private string FormatUrl(string mediaType, string key)
+        {
+            string type = "";
+            if (mediaType == "1") type = "movie?";
+            if (mediaType == "2") type = "tv?";
+
+            return "/discover/" + type + key + "&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=1";
         }
 
         private string ConvertReceivedData(string jsonObject)

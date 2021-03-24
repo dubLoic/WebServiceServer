@@ -4,36 +4,59 @@
     grid-template-rows: repeat(4, 3fr);
 }
 
-.modal{
+.modal {
     background-color: rgba(0,0,0,0) !important;
+    max-height: 100% !important;
 }
+
+    .modal .modal-dialog {
+        max-width: 750px !important;
+    }
 
 .modal-grid {
-    display:grid;
-    grid-template-columns: auto;
+    display: grid;
+    grid-template-columns: 255px 20px 400px;
+    grid-template-rows: 30px 20px auto;
+    grid-template-areas:
+        "photo . title"
+        "photo . ."
+        "photo . desc";
+}
+
+    .modal-grid .photo {
+        grid-area: photo;
+    }
+
+    .modal-grid .title {
+        grid-area: title;
+    }
+
+    .modal-grid .desc {
+        grid-area: desc;
+    }
+
+.foot {
+    display: grid;
+    grid-template-columns: 35% 5% 35% 5% 20%;
     grid-template-rows: auto;
-    grid-template-areas: 
-    "photo . title"
-    "photo . ."
-    "photo . desc"
-    "photo . like";
+    grid-template-areas: "like . sugg . grade";
+    width:100%;
 }
 
-.modal-grid .photo{
-    grid-area: photo;
-}
-.modal-grid .title{
-    grid-area: title;
-}
-.modal-grid .desc{
-    grid-area: desc;
-}
-.modal-grid .like{
-    grid-area: like;
-}
+    .foot .like {
+        grid-area: like;
+    }
 
-.card-container{
-    max-height:400px;
+    .foot .sugg {
+        grid-area: sugg;
+    }
+
+    .foot .grade {
+        grid-area: grade;
+    }
+
+.card-container {
+    max-height: 400px;
 }
 
 .card {
@@ -52,16 +75,17 @@
     grid-template-areas: "img" "title";
 }
 
-.card img{
-    grid-area:img;
-    justify-self:center;
-}
-.card div{
-    grid-area: title;
-    justify-self:center;
-    height:30px;
-    overflow:hidden;
-}
+    .card img {
+        grid-area: img;
+        justify-self: center;
+    }
+
+    .card div {
+        grid-area: title;
+        justify-self: center;
+        height: 30px;
+        overflow: hidden;
+    }
 
 .card-container .card:not(:last-child) {
     margin-right: 0;
