@@ -16,8 +16,8 @@ namespace WebserviceServer.Controllers
     {
         private static string URL = "https://api.themoviedb.org/3";
 
-        [HttpGet]
-        public string Get(string mediaType)
+        [HttpGet("{mediaType}")]
+        public string Get(int mediaType)
         {
             using (var client = new HttpClient())
             {
@@ -89,11 +89,9 @@ namespace WebserviceServer.Controllers
             return extens;
         }
 
-        private string FormatUrl(string mediaType, string key)
+        private string FormatUrl(int mediaType, string key)
         {
-            string type = "";
-            if (mediaType == "1") type = "movie?";
-            if (mediaType == "2") type = "tv?";
+            string type = mediaType == 1 ? "movie?" : "tv?";
 
             return "/discover/" + type + key + "&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=1";
         }

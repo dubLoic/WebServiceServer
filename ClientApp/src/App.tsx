@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import Header from './components/header/Header'
 import Data from './components/models/Data'
@@ -16,23 +16,25 @@ const App: React.FC = () => {
     const [genre, setGenre] = useState<string | undefined>()
     const [message, setMessage] = useState<string>("Our selection for you :")
     const [search, setSearch] = useState<boolean>(false)
+
     const [medias, setMedias] = useState<Media[]>([])
 
     useEffect(() => {
         if (search) {
-            getResult();
+            if ((!searchBar || searchBar === '') && (!genre || genre === "0"))
+                getDefaultResults()
+            else
+                getResult();
             setSearch(false);
         }
     }, [search])
 
     useEffect(() => {
-        if ((!searchBar || searchBar === '') && (!genre || genre === "0"))
-            getDefaultResults("Our selection for you :")
-        else if (medias.length === 0)
-            getDefaultResults("No result, check our selection for you :")
+        getDefaultResults()
     }, [])
 
-    const getDefaultResults = (msg: string) => {
+
+    const getDefaultResults = (msg: string = "Our selection for you") => {
         setMessage(msg);
         getDiscoverResult();
     }
@@ -82,7 +84,7 @@ const App: React.FC = () => {
 
     const fetchDiscover = async () => {
         let type: number = getMediaTypeByLocation();
-        let url = "Search/" + type;
+        let url = "Search/" + type.toString();
 
         const res = await fetch(url);
 
@@ -100,6 +102,7 @@ const App: React.FC = () => {
         setSearchBar('');
         setGenre('');
         setMedias([]);
+        setSearch(!search);
     }
 
     return (
@@ -108,6 +111,15 @@ const App: React.FC = () => {
 
                 <Header location={location} onChangedTab={setSearchToDefault} user={user} />
                 <Switch>
+                    <Route
+                        exact
+                        path="/"
+                        render={() => {
+                            return (
+                                <Redirect to="/Movies" />
+                            )
+                        }}
+                    />
                     <Route path={[Data.PATH_SEARCH_MOVIES, '/']}>
                         <Search mediaType='Movie'
                             searchBarValue={searchBar}
@@ -129,11 +141,11 @@ const App: React.FC = () => {
                     </Route>
 
                     <Route path={Data.PATH_FAVORITES}>
-
+                        <h3>Favorites</h3>
                     </Route>
 
                     <Route path={Data.PATH_SUGGESTIONS}>
-
+                        <h3>Suggestions</h3>
                     </Route>
                 </Switch>
 

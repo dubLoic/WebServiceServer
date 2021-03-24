@@ -15,7 +15,7 @@ const MediaModal: React.FC<Props> = ({ media, show, handleClose }) => {
             const requestOptions = {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ idFilm: id })
+                body: JSON.stringify({ IdMedia: { idMedia: id, mediaType: 1 } })
             };
             const res = await fetch(url, requestOptions);
             const data = await res.json();
@@ -37,10 +37,6 @@ const MediaModal: React.FC<Props> = ({ media, show, handleClose }) => {
 
                     <div className="desc">
                         {media?.overview}
-                    </div>
-
-                    <div className="grade">
-                        Note :
                     </div>
                 </div>
             </Modal.Body>
