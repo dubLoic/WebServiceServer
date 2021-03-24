@@ -5,10 +5,10 @@ import { useState } from 'react'
 import Option from './Option'
 
 
-const Gender: React.FC<Props> = ({onSelected, selectValue}) => {
+const Genre: React.FC<Props> = ({onSelected, selectValue}) => {
 
     const fetchGenders = async () => {
-        const res = await fetch(`https://api.themoviedb.org/3/genre/movie/list?api_key=6f37a27ccec1e836ed19a476c66b2213&language=en-US`)
+        const res = await fetch("Genre/")
         const data = await res.json()
         return data?.genres;
     }
@@ -59,4 +59,4 @@ interface Props{
     selectValue: string | undefined;
 }
 
-export default Gender
+export default Genre

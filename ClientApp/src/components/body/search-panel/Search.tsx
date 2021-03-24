@@ -1,5 +1,5 @@
 import React from 'react'
-import Gender from './Gender'
+import Gender from './Genre'
 import SearchBar from './SearchBar'
 
 const Search: React.FC<Props> = ({mediaType, onChange, onSelected, searchBarValue, selectValue}) => {

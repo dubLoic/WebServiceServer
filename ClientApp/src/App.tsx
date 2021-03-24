@@ -40,7 +40,6 @@ const App: React.FC = () => {
     const getResult = async () => {
         let tmp = await fetchMedias();
         if (tmp !== "Nothing") {
-            console.log(tmp);
             setMedias(tmp);
         }
     }

@@ -25,7 +25,7 @@ namespace WebserviceServer.Controllers
             using (var client = new HttpClient())
             {
                 //HTTP GET
-                var responseTask = client.GetAsync(URL + APIKey.apiKey);
+                var responseTask = client.GetAsync(URL + APIKey.apiKey + "&language=en-US");
                 responseTask.Wait();
 
                 var result = responseTask.Result;
