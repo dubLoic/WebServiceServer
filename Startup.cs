@@ -5,6 +5,9 @@ using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
+using WebserviceServer.Entite;
+using WebserviceServer.Service;
 
 namespace WebserviceServer
 {
@@ -20,8 +23,18 @@ namespace WebserviceServer
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // requires using Microsoft.Extensions.Options
+            services.Configure<MovieDatabaseSettings>(
+                Configuration.GetSection(nameof(MovieDatabaseSettings)));
+
+            services.AddSingleton<IMovieDatabaseSettings>(sp =>
+                sp.GetRequiredService<IOptions<MovieDatabaseSettings>>().Value);
+
+            services.AddSingleton<UserService>();
+
 
             services.AddControllersWithViews();
+
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
