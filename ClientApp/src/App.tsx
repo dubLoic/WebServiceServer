@@ -6,11 +6,13 @@ import Search from './components/body/search-panel/Search';
 import MediaList from './components/body/display-panel/MediaList';
 import MediaSearch from './components/models/MediaSearch';
 import Media from './components/body/display-panel/Media';
+import User from './components/models/User';
+import UserInput from './components/header/UserInput';
 
 const App: React.FC = () => {
     const location: string = window.location.pathname !== '/' ? window.location.pathname : Data.PATH_SEARCH_MOVIES;
 
-    const [user, setUser] = useState('Visiteur')
+    const [currentUser, setCurrentUser] = useState<User>({id:"none", name:"Visiteur"})
 
     const [searchBar, setSearchBar] = useState<string | undefined>('')
     const [genre, setGenre] = useState<string | undefined>()
@@ -109,7 +111,13 @@ const App: React.FC = () => {
         <Router>
             <div className="App">
 
-                <Header location={location} onChangedTab={setSearchToDefault} user={user} />
+                <Header location={location}
+                        onChangedTab={setSearchToDefault}
+                        userID={currentUser.id}
+                        username={currentUser.name}
+                        setUser={setCurrentUser}
+                />
+
                 <Switch>
                     <Route
                         exact
@@ -127,7 +135,11 @@ const App: React.FC = () => {
                             onChange={updateSearchBarValue}
                             onSelected={updateGenre} />
 
-                        <MediaList medias={medias} message={message} />
+                        <MediaList  medias={medias}
+                                    message={message}
+                                    userID={currentUser.id}
+                                    username={currentUser.id}
+                        />
                     </Route>
 
                     <Route path={Data.PATH_SEARCH_TV}>
@@ -137,7 +149,11 @@ const App: React.FC = () => {
                             onChange={updateSearchBarValue}
                             onSelected={updateGenre} />
 
-                        <MediaList medias={medias} message={message} />
+                        <MediaList  medias={medias}
+                                    message={message}
+                                    userID={currentUser.id}
+                                    username={currentUser.id}
+                        />
                     </Route>
 
                     <Route path={Data.PATH_FAVORITES}>

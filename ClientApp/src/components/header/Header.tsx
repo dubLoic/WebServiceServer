@@ -1,23 +1,27 @@
+import User from "../models/User"
 import Logo from "./Logo"
 import Tabs from './Tabs'
-import User from "./User"
+import UserInput from "./UserInput"
 
-const Header: React.FC<Props> = ({user, location, onChangedTab}) => {
+const Header: React.FC<Props> = ({userID, username, setUser, location, onChangedTab}) => {
     return (
         <nav style={navStyle} className="nav-extended">
             <div className="container nav-wrapper">
-                <Logo />
-                
-                <User user={user} />
+                <Logo username={username} />                 
 
+                <br/>
+                <UserInput userID={userID} username={username} setUser={setUser} />
                 <Tabs onChangedTab={onChangedTab} location={location} />
+                
             </div>
         </nav>
     )
 }
 
 interface Props{
-    user: string;
+    userID: string;
+    username: string;
+    setUser: (user: User) => void;
     location: string;
     onChangedTab: () => void;
 }

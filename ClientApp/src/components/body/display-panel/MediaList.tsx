@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
+import User from '../../models/User';
 import Media from './Media'
 import MediaCard from './MediaCard'
 import MediaModal from './MediaModal';
 
-const MediaList: React.FC<Props> = ({ medias, message }) => {
+const MediaList: React.FC<Props> = ({ medias, message, userID, username }) => {
     
     const [mediaToDisplay, setMediaToDisplay] = useState<Media | undefined>(undefined);
 
@@ -28,6 +29,8 @@ const MediaList: React.FC<Props> = ({ medias, message }) => {
             <MediaModal show={show}
                 handleClose={handleClose}
                 media={mediaToDisplay}
+                userID={userID}
+                username={username}
             />
         </div>
     )
@@ -36,6 +39,8 @@ const MediaList: React.FC<Props> = ({ medias, message }) => {
 interface Props {
     medias: Media[];
     message: string;
+    userID: string;
+    username: string;
 }
 
 export default MediaList

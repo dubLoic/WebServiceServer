@@ -8,5 +8,8 @@ interface Media {
     overview: string;
     original_title: string;
     poster_path: string;
+    nb_suggested: number;
+    nb_favorite: number;
+    isFavorite: boolean;
 }
 
