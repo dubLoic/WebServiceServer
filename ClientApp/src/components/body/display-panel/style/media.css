@@ -16,11 +16,12 @@
 .modal-grid {
     display: grid;
     grid-template-columns: 255px 20px 400px;
-    grid-template-rows: 30px 20px auto;
+    grid-template-rows: 30px 20px auto 20px;
     grid-template-areas:
         "photo . title"
         "photo . ."
-        "photo . desc";
+        "photo . desc"
+        "photo . stats";
 }
 
     .modal-grid .photo {
@@ -35,12 +36,28 @@
         grid-area: desc;
     }
 
+    .modal-grid .stats {
+        grid-area: stats;
+        display: grid;
+        grid-template-columns: 40% 20% 40%;
+        grid-template-rows: auto;
+        grid-template-areas: "nb_like . nb_sugg";
+    }
+
+        .modal-grid .stats .nb_like {
+            grid-area: nb_like;
+        }
+
+        .modal-grid .stats .nb_sugg {
+            grid-area: nb_sugg;
+        }
+
 .foot {
     display: grid;
     grid-template-columns: 35% 5% 35% 5% 20%;
     grid-template-rows: auto;
     grid-template-areas: "like . sugg . grade";
-    width:100%;
+    width: 100%;
 }
 
     .foot .like {
