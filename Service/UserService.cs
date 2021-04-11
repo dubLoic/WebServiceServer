@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WebserviceServer.Entite;
+using WebserviceServer.Entite.MongoObjects;
 
 namespace WebserviceServer.Service
 {
@@ -27,42 +28,22 @@ namespace WebserviceServer.Service
             return users;
         }
 
-        public User GetUser(User tempUser) =>
+        public User Get(User tempUser) =>
             _users.Find(user => (user.userName == tempUser.userName && user.userName == tempUser.userName)).FirstOrDefault();
 
-        //  Exemple Get pour un filtre multiple
-        //public User Get(User tempUser)
-        //{
-        //    var filter = Builders<User>.Filter.And(
-        //        Builders<User>.Filter.Eq("IdMedia.mediaType", tempUser.IdMedia.mediaType),
-        //        Builders<User>.Filter.Eq("IdMedia.idMedia", tempUser.IdMedia.idMedia)
-        //    );
-
-        //    return _users.Find(filter).FirstOrDefault();
-        //}
-
-        public User CreateUser(User user)
+        public User CreateUser(User newUser)
         {
-            _users.InsertOne(user);
+            User user = Get(newUser);
+            if(user == null)
+            {
+                user = newUser;
+                _users.InsertOne(user);
+            }
             return user;
         }
 
-        //public void UpdateLike(User userIn)
-        //{
-
-        //    _users.ReplaceOne(
-        //        filter: new BsonDocument("IdMedia", userIn.IdMedia.idMedia),
-        //        options: new ReplaceOptions { IsUpsert = true },
-        //        replacement: userIn);
-        //}
-
         public void Remove(User userIn) =>
             _users.DeleteOne(user => (user.userName == userIn.userName));
-
-
-            //_users.DeleteOne(user => user.Id == userIn.Id);
-
-
     }
 }
 

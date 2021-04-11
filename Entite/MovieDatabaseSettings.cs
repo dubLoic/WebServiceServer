@@ -8,6 +8,8 @@ namespace WebserviceServer.Entite
     public class MovieDatabaseSettings : IMovieDatabaseSettings
     {
         public string UserCollectionName { get; set; }
+        public string LikeCollectionName { get; set; }
+        public string SuggestionCollectionName { get; set; }
         public string ConnectionString { get; set; }
         public string DatabaseName { get; set; }
     }
@@ -15,6 +17,8 @@ namespace WebserviceServer.Entite
     public interface IMovieDatabaseSettings
     {
         public string UserCollectionName { get; set; }
+        public string LikeCollectionName { get; set; }
+        public string SuggestionCollectionName { get; set; }
         public string ConnectionString { get; set; }
         public string DatabaseName { get; set; }
     }

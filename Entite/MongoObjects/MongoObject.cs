@@ -3,11 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace WebserviceServer.Entite
+namespace WebserviceServer.Entite.MongoObjects
 {
-    public class Genre
+    public class MongoObject
     {
-        public int id;
-        public string name;
     }
 }

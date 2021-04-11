@@ -13,9 +13,9 @@ namespace WebserviceServer.Controllers
     [ApiController]
     public class LikesController : ControllerBase
     {
-        private readonly LikeService _likeService;
+        private readonly SuggestionService _likeService;
 
-        public LikesController(LikeService likeService)
+        public LikesController(SuggestionService likeService)
         {
             _likeService = likeService;
         }
