@@ -15,7 +15,6 @@ const MediaModal: React.FC<Props> = ({ media, show, handleClose, userID, usernam
     const [selectedValue, setSelectedValue] = useState<string>('');
 
     const fetchNbLikes = async (id: number | undefined, type: number | undefined) => {
-        console.log(id + '-' + type);
         if (id && type) {
             let url = "Like/" + id + "/" + type
 
@@ -46,7 +45,6 @@ const MediaModal: React.FC<Props> = ({ media, show, handleClose, userID, usernam
 
     const handleLike = async (id: number | undefined, type: number | undefined) => {
         if (id && type && userID != Data.GUEST_ID) {
-
             let obj = { IdMedia: { idMedia: id, mediaType: type }, LikedBy: username }
             let url = "Like/"
             const requestOptions = {

@@ -42,8 +42,8 @@ namespace WebserviceServer.Controllers
 
             ResponseMessage rm = new ResponseMessage()
             {
-                count = _likeService.Get().Count(),
-            msg = added ? "Added to your Favorites" : "Removed from your Favorites"
+                count = _likeService.GetLikesForSelectedMedia(like.IdMedia.idMedia, like.IdMedia.mediaType).Count(),
+                msg = added ? "Added to your Favorites" : "Removed from your Favorites"
             };
 
             return rm;

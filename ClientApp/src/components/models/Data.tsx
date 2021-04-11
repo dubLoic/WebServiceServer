@@ -5,7 +5,7 @@ export class Data{
     static PATH_SEARCH_MOVIES: string = '/Movies'
     static NAME_SEARCH_MOVIES: string = 'Movies'
 
-    static PATH_SEARCH_TV: string = '/TVShows'
+    static PATH_SEARCH_TV: string = '/TV%20Shows'
     static NAME_SEARCH_TV: string = 'TV Shows'
 
     static PATH_SUGGESTIONS: string = '/Suggestions'
