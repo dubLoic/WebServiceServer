@@ -4,18 +4,19 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using WebserviceServer.Entite;
+using WebserviceServer.Entities;
+using WebserviceServer.Entities.MongoObjects;
 using WebserviceServer.Service;
 
 namespace WebserviceServer.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    public class LikesController : ControllerBase
+    public class LikeController : ControllerBase
     {
-        private readonly SuggestionService _likeService;
+        private readonly LikeService _likeService;
 
-        public LikesController(SuggestionService likeService)
+        public LikeController(LikeService likeService)
         {
             _likeService = likeService;
         }
@@ -24,52 +25,28 @@ namespace WebserviceServer.Controllers
         public List<Like> Get() =>
             _likeService.Get();
 
-        [HttpGet("{id:length(24)}", Name = "GetLike")]
-        public Like Get(Like likeIn)
+        [HttpGet("{id}/{type}")]
+        public ResponseMessage GetLikesForSelectedMedia(string id, string type)
         {
-            var like = _likeService.Get(likeIn);
-
-            if (like == null)
+            ResponseMessage rm = new ResponseMessage()
             {
-                return null;
-            }
-
-            return like;
+                count = _likeService.GetLikesForSelectedMedia(Int32.Parse(id), Int32.Parse(type)).Count()
+            };
+            return rm;
         }
 
         [HttpPost]
-        public Like CreateOrUpdate(Like like)
+        public ResponseMessage Create(Like like)
         {
-            //Delete(like);
+            bool added = _likeService.Create(like);
 
-            _likeService.Create(like);
+            ResponseMessage rm = new ResponseMessage()
+            {
+                count = _likeService.Get().Count(),
+            msg = added ? "Added to your Favorites" : "Removed from your Favorites"
+            };
 
-            var getLike = Get(like);
-            return getLike;
+            return rm;
         }
-
-
-        [HttpDelete("{id:length(24)}")]
-        public bool Delete(Like like)
-        {
-            var likeExist = Get(like);
-            if (likeExist == null)
-            {
-                return false;
-            }
-
-            _likeService.Remove(like);
-
-            var getLike = Get(like);
-            if (getLike == null)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
     }
 }

@@ -1,12 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Threading.Tasks;
-using WebserviceServer.Entite;
+using WebserviceServer.Entities;
 
 namespace WebserviceServer.Controllers
 {
@@ -34,7 +29,7 @@ namespace WebserviceServer.Controllers
                     var readTask = result.Content.ReadAsStringAsync();
                     readTask.Wait();
 
-                    return ConvertReceivedData(readTask.Result);
+                    return ConvertReceivedData(readTask.Result, mediaType);
                 }
                 else
                 {
@@ -65,7 +60,7 @@ namespace WebserviceServer.Controllers
                     var readTask = result.Content.ReadAsStringAsync();
                     readTask.Wait();
 
-                    return ConvertReceivedData(readTask.Result);
+                    return ConvertReceivedData(readTask.Result, query.mediaType);
                 }
                 else
                 {
@@ -96,13 +91,13 @@ namespace WebserviceServer.Controllers
             return "/discover/" + type + key + "&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=1";
         }
 
-        private string ConvertReceivedData(string jsonObject)
+        private string ConvertReceivedData(string jsonObject, int mediaType)
         {
             MediaResult res = JsonConvert.DeserializeObject<MediaResult>(jsonObject);
             MediaDTO[] medias = res.results;
             for (int i = 0; i < medias.Length; i++)
             {
-                medias[i] = medias[i].Format();
+                medias[i] = medias[i].Format(mediaType);
             }
             return JsonConvert.SerializeObject(medias);
         }

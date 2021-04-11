@@ -4,8 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using WebserviceServer.Entite;
-using WebserviceServer.Entite.MongoObjects;
+using WebserviceServer.Entities;
+using WebserviceServer.Entities.MongoObjects;
 
 namespace WebserviceServer.Service
 {
@@ -17,7 +17,7 @@ namespace WebserviceServer.Service
             var client = new MongoClient(settings.ConnectionString);
             var database = client.GetDatabase(settings.DatabaseName);
 
-            _suggestions = database.GetCollection<Suggestion>(settings.UserCollectionName);
+            _suggestions = database.GetCollection<Suggestion>(settings.SuggestionCollectionName);
 
         }
 
@@ -29,35 +29,37 @@ namespace WebserviceServer.Service
         }
 
         public Suggestion Get(Suggestion toGet) =>
-            _suggestions.Find(suggestion => (suggestion.IdMedia.mediaType == toGet.IdMedia.mediaType && 
+            _suggestions.Find(suggestion => (suggestion.IdMedia.mediaType == toGet.IdMedia.mediaType &&
                                              suggestion.IdMedia.idMedia == toGet.IdMedia.idMedia &&
                                              suggestion.SuggestedBy == toGet.SuggestedBy &&
                                              suggestion.SuggestedTo == toGet.SuggestedTo)).FirstOrDefault();
 
-        public Suggestion Create(Suggestion toCreate)
-        {
-            _suggestions.InsertOne(toCreate);
-            return toCreate;
-        }
+        public List<Suggestion> GetSuggestionsForSelectedMedia(int id, int type, string suggestedTo) =>
+            _suggestions.Find(suggestion => (suggestion.IdMedia.mediaType == type &&
+                                             suggestion.IdMedia.idMedia == id &&
+                                             suggestion.SuggestedTo == suggestedTo)).ToList();
 
-        public void Update(Suggestion toUpdate)
+
+        public bool Create(Suggestion toCreate)
         {
-            Suggestion sugg = Get(toUpdate);
-            if (sugg != null)
-                Remove(sugg);
+            if (Get(toCreate) == null)
+            {
+                _suggestions.InsertOne(toCreate);
+                return true;
+            }
             else
-                Create(sugg);
+            {
+                Remove(toCreate.IdMedia.idMedia, toCreate.IdMedia.mediaType, toCreate.SuggestedBy, toCreate.SuggestedTo);
+                return false;
+            }
         }
 
-        public void Remove(Suggestion toRemove) =>
-            _suggestions.DeleteOne(suggestion => (suggestion == toRemove));
-            //_suggestions.DeleteOne(
-            //    suggestion => (suggestion.IdMedia.mediaType == toRemove.IdMedia.mediaType && 
-            //                   suggestion.IdMedia.idMedia == toRemove.IdMedia.idMedia &&
-            //                   suggestion.SuggestedBy == toRemove.SuggestedBy &&
-            //                   suggestion.SuggestedTo == toRemove.SuggestedTo));
-
-
+        public void Remove(int id, int type, string suggestedBy, string suggestedTo) =>
+          _suggestions.DeleteOne(
+                  suggestion => (suggestion.IdMedia.mediaType == type &&
+                                 suggestion.IdMedia.idMedia == id &&
+                                 suggestion.SuggestedBy == suggestedBy &&
+                                 suggestion.SuggestedTo == suggestedTo));
     }
 }
 

@@ -5,13 +5,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace WebserviceServer.Entite.MongoObjects
+namespace WebserviceServer.Entities.MongoObjects
 {
     public class User : MongoObject
     {
-        public Like[] likes { get; set; }
-        public Suggestion[] suggestions { get; set; }
-        public string userName { get; set; }
+        public string Username { get; set; }
 
 
     }

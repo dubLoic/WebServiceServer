@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace WebserviceServer.Entite
+namespace WebserviceServer.Entities
 {
     public class MovieDatabaseSettings : IMovieDatabaseSettings
     {

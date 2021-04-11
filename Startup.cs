@@ -6,7 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
-using WebserviceServer.Entite;
+using WebserviceServer.Entities;
 using WebserviceServer.Service;
 
 namespace WebserviceServer
@@ -31,6 +31,8 @@ namespace WebserviceServer
                 sp.GetRequiredService<IOptions<MovieDatabaseSettings>>().Value);
 
             services.AddSingleton<UserService>();
+            services.AddSingleton<LikeService>();
+            services.AddSingleton<SuggestionService>();
 
 
             services.AddControllersWithViews();

@@ -9,7 +9,7 @@ const Tabs: React.FC<Props> = ({location, onChangedTab}) => {
         { id: 1, name:Data.NAME_SEARCH_MOVIES, active: location === Data.PATH_SEARCH_MOVIES ? 'active' : ''},
         { id: 2, name:Data.NAME_SEARCH_TV, active: location === Data.PATH_SEARCH_TV ? 'active' : ''},
         { id: 3, name:Data.NAME_FAVORITES, active: location === Data.PATH_FAVORITES ? 'active' : ''},
-        { id: 4, name:Data.NAME_SUGGESTIONS, active: location === Data.PATH_SUGGESTIONS ? 'active' : ''},
+    //    { id: 4, name:Data.NAME_SUGGESTIONS, active: location === Data.PATH_SUGGESTIONS ? 'active' : ''},
     ]);
 
     const onClick = (id: number) => {

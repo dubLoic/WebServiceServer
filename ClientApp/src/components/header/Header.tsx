@@ -3,14 +3,14 @@ import Logo from "./Logo"
 import Tabs from './Tabs'
 import UserInput from "./UserInput"
 
-const Header: React.FC<Props> = ({userID, username, setUser, location, onChangedTab}) => {
+const Header: React.FC<Props> = ({username, setUser, location, onChangedTab}) => {
     return (
         <nav style={navStyle} className="nav-extended">
             <div className="container nav-wrapper">
                 <Logo username={username} />                 
 
                 <br/>
-                <UserInput userID={userID} username={username} setUser={setUser} />
+                <UserInput setUser={setUser} />
                 <Tabs onChangedTab={onChangedTab} location={location} />
                 
             </div>

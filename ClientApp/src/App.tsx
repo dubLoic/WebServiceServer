@@ -5,14 +5,14 @@ import Data from './components/models/Data'
 import Search from './components/body/search-panel/Search';
 import MediaList from './components/body/display-panel/MediaList';
 import MediaSearch from './components/models/MediaSearch';
-import Media from './components/body/display-panel/Media';
+import Media from './components/body/display-panel/Interfaces/Media';
 import User from './components/models/User';
 import UserInput from './components/header/UserInput';
 
 const App: React.FC = () => {
     const location: string = window.location.pathname !== '/' ? window.location.pathname : Data.PATH_SEARCH_MOVIES;
 
-    const [currentUser, setCurrentUser] = useState<User>({id:"none", name:"Visiteur"})
+    const [currentUser, setCurrentUser] = useState<User>({id:Data.GUEST_ID, username:Data.GUEST_NAME})
 
     const [searchBar, setSearchBar] = useState<string | undefined>('')
     const [genre, setGenre] = useState<string | undefined>()
@@ -20,6 +20,8 @@ const App: React.FC = () => {
     const [search, setSearch] = useState<boolean>(false)
 
     const [medias, setMedias] = useState<Media[]>([])
+    const [users, setUsers] = useState<User[]>([])
+
 
     useEffect(() => {
         if (search) {
@@ -34,6 +36,13 @@ const App: React.FC = () => {
     useEffect(() => {
         getDefaultResults()
     }, [])
+
+    useEffect(() => {
+        if(currentUser.id != Data.GUEST_ID)
+            getUsers()
+    }, [currentUser])
+
+
 
 
     const getDefaultResults = (msg: string = "Our selection for you") => {
@@ -68,6 +77,10 @@ const App: React.FC = () => {
             setMedias(tmp);
         }
     }
+    const getUsers = async () => {
+        let tmp = await fetchUsers();
+        setUsers(tmp);
+    }
 
     const fetchMedias = async () => {
         let type: number = getMediaTypeByLocation();
@@ -94,6 +107,13 @@ const App: React.FC = () => {
         return data;
     }
 
+    const fetchUsers = async () => {
+        let url = "User/"
+        const res = await fetch(url);
+
+        const data = await res.json();
+        return data;
+    }
     const getMediaTypeByLocation = () => {
         if (location === Data.PATH_SEARCH_MOVIES) return 1;
         if (location === Data.PATH_SEARCH_TV) return 2;
@@ -114,7 +134,7 @@ const App: React.FC = () => {
                 <Header location={location}
                         onChangedTab={setSearchToDefault}
                         userID={currentUser.id}
-                        username={currentUser.name}
+                        username={currentUser.username}
                         setUser={setCurrentUser}
                 />
 
@@ -139,6 +159,7 @@ const App: React.FC = () => {
                                     message={message}
                                     userID={currentUser.id}
                                     username={currentUser.id}
+                                    users={users}
                         />
                     </Route>
 
@@ -153,16 +174,17 @@ const App: React.FC = () => {
                                     message={message}
                                     userID={currentUser.id}
                                     username={currentUser.id}
+                                    users={users}
                         />
                     </Route>
 
-                    <Route path={Data.PATH_FAVORITES}>
-                        <h3>Favorites</h3>
-                    </Route>
+                    {/*<Route path={Data.PATH_FAVORITES}>*/}
+                    {/*    <h3>Favorites</h3>*/}
+                    {/*</Route>*/}
 
-                    <Route path={Data.PATH_SUGGESTIONS}>
-                        <h3>Suggestions</h3>
-                    </Route>
+                    {/*<Route path={Data.PATH_SUGGESTIONS}>*/}
+                    {/*    <h3>Suggestions</h3>*/}
+                    {/*</Route>*/}
                 </Switch>
 
             </div>

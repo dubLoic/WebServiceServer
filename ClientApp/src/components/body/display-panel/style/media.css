@@ -39,24 +39,26 @@
     .modal-grid .stats {
         grid-area: stats;
         display: grid;
-        grid-template-columns: 40% 20% 40%;
+        grid-template-columns: 40% 5% 55%;
         grid-template-rows: auto;
         grid-template-areas: "nb_like . nb_sugg";
     }
 
         .modal-grid .stats .nb_like {
             grid-area: nb_like;
+            color: green;
         }
 
         .modal-grid .stats .nb_sugg {
             grid-area: nb_sugg;
+            color: blue;
         }
 
 .foot {
     display: grid;
-    grid-template-columns: 35% 5% 35% 5% 20%;
+    grid-template-columns: 55% 10% 35%;
     grid-template-rows: auto;
-    grid-template-areas: "like . sugg . grade";
+    grid-template-areas: "like . sugg" "msg msg msg";
     width: 100%;
 }
 
@@ -68,8 +70,10 @@
         grid-area: sugg;
     }
 
-    .foot .grade {
-        grid-area: grade;
+    .foot .msg{
+        grid-area: msg;
+        justify-self:center;
+        color:red;
     }
 
 .card-container {

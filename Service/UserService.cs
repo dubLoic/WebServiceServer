@@ -4,8 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using WebserviceServer.Entite;
-using WebserviceServer.Entite.MongoObjects;
+using WebserviceServer.Entities;
+using WebserviceServer.Entities.MongoObjects;
 
 namespace WebserviceServer.Service
 {
@@ -28,8 +28,10 @@ namespace WebserviceServer.Service
             return users;
         }
 
-        public User Get(User tempUser) =>
-            _users.Find(user => (user.userName == tempUser.userName && user.userName == tempUser.userName)).FirstOrDefault();
+        public User Get(string userID) =>
+            _users.Find(user => (user.Id == userID)).FirstOrDefault();
+        public User Get(User toGet) =>
+            _users.Find(user => (user.Username == toGet.Username)).FirstOrDefault();
 
         public User CreateUser(User newUser)
         {
@@ -43,7 +45,7 @@ namespace WebserviceServer.Service
         }
 
         public void Remove(User userIn) =>
-            _users.DeleteOne(user => (user.userName == userIn.userName));
+            _users.DeleteOne(user => (user.Username == userIn.Username));
     }
 }
 

@@ -4,8 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using WebserviceServer.Entite;
-using WebserviceServer.Entite.MongoObjects;
+using WebserviceServer.Entities;
+using WebserviceServer.Entities.MongoObjects;
 
 namespace WebserviceServer.Service
 {
@@ -17,7 +17,7 @@ namespace WebserviceServer.Service
             var client = new MongoClient(settings.ConnectionString);
             var database = client.GetDatabase(settings.DatabaseName);
 
-            _likes = database.GetCollection<Like>(settings.UserCollectionName);
+            _likes = database.GetCollection<Like>(settings.LikeCollectionName);
 
         }
 
@@ -28,6 +28,9 @@ namespace WebserviceServer.Service
             return likes;
         }
 
+        public List<Like> GetLikesForSelectedMedia(int id, int type) =>
+            _likes.Find(like => (like.IdMedia.mediaType == type &&
+                                 like.IdMedia.idMedia == id)).ToList();
 
         //public Like Get(Like tempLike)
         //{
@@ -44,27 +47,25 @@ namespace WebserviceServer.Service
                                  like.IdMedia.idMedia == toGet.IdMedia.idMedia &&
                                  like.LikedBy == toGet.LikedBy)).FirstOrDefault();
 
-        public Like Create(Like toCreate)
+        public bool Create(Like toCreate)
         {
-            _likes.InsertOne(toCreate);
-            return toCreate;
-        }
-
-        public void Update(Like toUpdate)
-        {
-            Like like = Get(toUpdate);
-            if (like != null)
-                Remove(like);
+            if (Get(toCreate) == null)
+            {
+                _likes.InsertOne(toCreate);
+                return true;
+            }
             else
-                Create(like);
+            {
+                Remove(toCreate.IdMedia.idMedia, toCreate.IdMedia.mediaType, toCreate.LikedBy);
+                return false;
+            }                
         }
 
-        public void Remove(Like toRemove) =>
-            _likes.DeleteOne(like => (like == toRemove));
-        //  _likes.DeleteOne(
-        //          like => (like.IdMedia.mediaType == toRemove.IdMedia.mediaType && 
-        //                   like.IdMedia.idMedia == toRemove.IdMedia.idMedia &&
-        //                   like.LikedBy == toRemove.LikedBy &&
+        public void Remove(int id, int type, string userID) =>
+          _likes.DeleteOne(
+                  like => (like.IdMedia.mediaType == type &&
+                           like.IdMedia.idMedia == id &&
+                           like.LikedBy == userID));
 
 
     }

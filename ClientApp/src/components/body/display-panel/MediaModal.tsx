@@ -1,51 +1,83 @@
 import React, { useEffect, useRef, useState } from 'react'
-import Media from './Media'
+import Media from './Interfaces/Media'
 import Modal from "react-bootstrap/Modal";
 import "bootstrap/dist/css/bootstrap.min.css";
 import './style/media.css'
-import { type } from 'os';
+import Data from '../../models/Data';
 import User from '../../models/User';
+import ResponseMessage from './Interfaces/ResponseMessage';
 
 
-const MediaModal: React.FC<Props> = ({ media, show, handleClose, userID, username }) => {
+const MediaModal: React.FC<Props> = ({ media, show, handleClose, userID, username, users }) => {
+    const [message, setMessage] = useState<string>('');
     const [nbLikes, setNbLikes] = useState<number>(0);
     const [nbSugg, setNbSugg] = useState<number>(0);
+    const [selectedValue, setSelectedValue] = useState<string>('');
 
-    const handleLike = async (id: number | undefined, type: string | undefined) => {
-        if (id) {
-            let url = "Likes/"
+    const fetchNbLikes = async (id: number | undefined, type: number | undefined) => {
+        console.log(id + '-' + type);
+        if (id && type) {
+            let url = "Like/" + id + "/" + type
 
-            const requestOptions = {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ IdMedia: { idMedia: id, mediaType: type }, userId:userID })
-            };
-            const res = await fetch(url, requestOptions);
-            const data = await res.json();
-            setNbLikes(data);
+            const res = await fetch(url);
+            const data: ResponseMessage = await res.json();
+
+            setNbLikes(data.count);
         }
     }
-    const handleSuggestion = async (id: number | undefined, type: string | undefined, target: string | undefined) => {
-        if (id) {
-            let url = "Suggestions/"
+    const fetchNbSuggs = async (id: number | undefined, type: number | undefined) => {
 
-            const requestOptions = {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ IdMedia: { idMedia: id, mediaType: type }, targetUserID: target, suggestedBy: username })
-            };
-            const res = await fetch(url, requestOptions);
-            const data = await res.json();
-            setNbSugg(data);
+        if (id && type) {
+            let url = "Suggestion/suggs?id=" + id + "&type=" + type + "&suggestedTo=" + userID
+
+            const res = await fetch(url);
+            const data: ResponseMessage = await res.json();
+
+            setNbSugg(data.count);
         }
     }
 
     useEffect(() => {
-        if (media) {
-            setNbLikes(media.nb_favorite)
-            setNbSugg(media.nb_suggested)
+        fetchNbLikes(media?.id, media?.media_type)
+        fetchNbSuggs(media?.id, media?.media_type)
+        setMessage('')
+    }, [media, userID])
+
+
+    const handleLike = async (id: number | undefined, type: number | undefined) => {
+        if (id && type && userID != Data.GUEST_ID) {
+
+            let obj = { IdMedia: { idMedia: id, mediaType: type }, LikedBy: username }
+            let url = "Like/"
+            const requestOptions = {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(obj)
+            };
+            const res = await fetch(url, requestOptions);
+
+            const data: ResponseMessage = await res.json();
+
+            setNbLikes(data.count);
+            setMessage(data.msg);
         }
-    }, [])
+    }
+    const handleSuggestion = async (id: number | undefined, type: number | undefined, suggestedTo: string | undefined) => {
+        if (id && type && userID != Data.GUEST_ID) {
+            let obj = { IdMedia: { idMedia: id, mediaType: type }, SuggestedTo: suggestedTo, SuggestedBy: username }
+            let url = "Suggestion/"
+
+            const requestOptions = {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(obj)
+            };
+            const res = await fetch(url, requestOptions);
+            const data: ResponseMessage = await res.json();
+            setMessage(data.msg);
+            setSelectedValue('');
+        }
+    }
 
     const inputRef = useRef<HTMLSelectElement>(null);
 
@@ -67,10 +99,10 @@ const MediaModal: React.FC<Props> = ({ media, show, handleClose, userID, usernam
 
                     <div className="stats">
                         <div className="nb_like">
-                            Favorite : {nbLikes} times
+                            Favorite : {nbLikes} time(s)
                         </div>
                         <div className="nb_sugg">
-                            Suggested : {nbSugg} times
+                            Suggested for you by {nbSugg} user(s)
                         </div>
                     </div>
                 </div>
@@ -78,26 +110,26 @@ const MediaModal: React.FC<Props> = ({ media, show, handleClose, userID, usernam
             <Modal.Footer>
                 <div className="foot">
                     <div className="like btn" onClick={() => handleLike(media?.id, media?.media_type)}>
-                        {
-                            media?.isFavorite ?
-                                <span>Remove from Favorites</span>
-                            :
-                                <span>Add to Favorites</span>
-                        }
+                        Add / Remove from favorites
                     </div>
+
                     <select className="sugg" ref={inputRef} onChange={() => handleSuggestion(media?.id, media?.media_type, inputRef.current?.value)}>
-                        <option value="0" selected disabled>Suggest to :</option>
+                        {selectedValue === '' ?
+                            <option value="0" selected disabled>Suggest to :</option>
+                            :
+                            <option value="0" disabled>Suggest to :</option>
+                        }
+
+                        {
+                            users.filter(user => user.id != userID).map((item) => (
+                                <option key={item.id} value={item.id}> {item.username}</option>
+                            ))}
                     </select>
-                    <select className="grade">
-                        <option value="none" selected disabled>Note :</option>
-                        <option value="0" >0</option>
-                        <option value="1" >1</option>
-                        <option value="2" >2</option>
-                        <option value="3" >3</option>
-                        <option value="4" >4</option>
-                        <option value="5" >5</option>
-                    </select>
+                    <div className="msg">
+                        {message}
+                    </div>
                 </div>
+                
             </Modal.Footer>
         </Modal>
     )
@@ -105,6 +137,7 @@ const MediaModal: React.FC<Props> = ({ media, show, handleClose, userID, usernam
 
 interface Props {
     media?: Media;
+    users: User[];
     show: boolean;
     handleClose: () => void;
     userID: string;
@@ -115,5 +148,4 @@ interface Props {
 const modalStyle = {
     backgroundColor: 'none',
 }
-
 export default MediaModal

@@ -10,6 +10,9 @@ export class Data{
 
     static PATH_SUGGESTIONS: string = '/Suggestions'
     static NAME_SUGGESTIONS: string = 'Suggestions'
+
+    static GUEST_ID: string = 'none'
+    static GUEST_NAME: string = 'Visiteur'
 }
 
 export default Data;

@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { useState } from 'react';
-import Media from './Media'
+import Media from './Interfaces/Media'
 import './style/media.css'
 
 const MediaCard: React.FC<Props> = ({ media, handleShow }) => {
